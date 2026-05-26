@@ -16,7 +16,7 @@ jobs:
       contents: read
       pull-requests: read
       issues: read
-      id-token: write   # Required: the action exchanges an OIDC token for a GitHub App token
+      id-token: write # Required: the action exchanges an OIDC token for a GitHub App token
 
     steps:
       - name: Checkout repository
