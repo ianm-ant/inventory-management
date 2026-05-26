@@ -1,48 +1,96 @@
 <template>
   <div class="app">
-    <header class="top-nav">
-      <div class="nav-container">
-        <div class="logo">
-          <h1>{{ t('nav.companyName') }}</h1>
-          <span class="subtitle">{{ t('nav.subtitle') }}</span>
-        </div>
-        <nav class="nav-tabs">
-          <router-link to="/" :class="{ active: $route.path === '/' }">
-            {{ t('nav.overview') }}
-          </router-link>
-          <router-link to="/inventory" :class="{ active: $route.path === '/inventory' }">
-            {{ t('nav.inventory') }}
-          </router-link>
-          <router-link to="/orders" :class="{ active: $route.path === '/orders' }">
-            {{ t('nav.orders') }}
-          </router-link>
-          <router-link to="/spending" :class="{ active: $route.path === '/spending' }">
-            {{ t('nav.finance') }}
-          </router-link>
-          <router-link to="/demand" :class="{ active: $route.path === '/demand' }">
-            {{ t('nav.demandForecast') }}
-          </router-link>
-          <router-link to="/reports" :class="{ active: $route.path === '/reports' }">
-            Reports
-          </router-link>
-        </nav>
-        <LanguageSwitcher />
-        <ProfileMenu
-          @show-profile-details="showProfileDetails = true"
-          @show-tasks="showTasks = true"
-        />
+    <aside class="sidebar" :class="{ collapsed }">
+      <button class="sidebar-toggle" @click="toggleSidebar" :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="13 16 7 10 13 4"/>
+        </svg>
+      </button>
+      <div class="sidebar-logo">
+        <span class="logo-monogram">FI</span>
+        <h1>{{ t('nav.companyName') }}</h1>
+        <span class="subtitle">{{ t('nav.subtitle') }}</span>
       </div>
-    </header>
-    <FilterBar />
-    <main class="main-content">
-      <router-view />
-    </main>
+      <nav class="sidebar-nav">
+        <router-link to="/" class="nav-item" :title="t('nav.overview')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="7" height="7" rx="1"/>
+            <rect x="11" y="2" width="7" height="7" rx="1"/>
+            <rect x="2" y="11" width="7" height="7" rx="1"/>
+            <rect x="11" y="11" width="7" height="7" rx="1"/>
+          </svg>
+          <span class="nav-label">{{ t('nav.overview') }}</span>
+        </router-link>
+        <router-link to="/inventory" class="nav-item" :title="t('nav.inventory')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 2L2 6v8l8 4 8-4V6z"/>
+            <polyline points="2 6 10 10 18 6"/>
+            <line x1="10" y1="10" x2="10" y2="18"/>
+          </svg>
+          <span class="nav-label">{{ t('nav.inventory') }}</span>
+        </router-link>
+        <router-link to="/orders" class="nav-item" :title="t('nav.orders')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="3" width="12" height="14" rx="1"/>
+            <path d="M7 3a3 3 0 0 1 6 0"/>
+            <line x1="7" y1="10" x2="13" y2="10"/>
+            <line x1="7" y1="14" x2="11" y2="14"/>
+          </svg>
+          <span class="nav-label">{{ t('nav.orders') }}</span>
+        </router-link>
+        <router-link to="/spending" class="nav-item" :title="t('nav.finance')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="16" height="10" rx="1"/>
+            <circle cx="10" cy="11" r="2.5"/>
+            <line x1="2" y1="9.5" x2="5" y2="9.5"/>
+            <line x1="2" y1="12.5" x2="5" y2="12.5"/>
+            <line x1="15" y1="9.5" x2="18" y2="9.5"/>
+            <line x1="15" y1="12.5" x2="18" y2="12.5"/>
+          </svg>
+          <span class="nav-label">{{ t('nav.finance') }}</span>
+        </router-link>
+        <router-link to="/demand" class="nav-item" :title="t('nav.demandForecast')">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="2 16 7 9 12 13 18 4"/>
+            <polyline points="14 4 18 4 18 8"/>
+          </svg>
+          <span class="nav-label">{{ t('nav.demandForecast') }}</span>
+        </router-link>
+        <router-link to="/reports" class="nav-item" title="Reports">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="12" width="4" height="6" rx="1"/>
+            <rect x="8" y="7" width="4" height="11" rx="1"/>
+            <rect x="14" y="3" width="4" height="15" rx="1"/>
+          </svg>
+          <span class="nav-label">Reports</span>
+        </router-link>
+      </nav>
+      <div class="sidebar-footer">
+        <template v-if="!collapsed">
+          <LanguageSwitcher />
+          <ProfileMenu
+            @show-profile-details="showProfileDetails = true"
+            @show-tasks="showTasks = true"
+          />
+        </template>
+        <template v-else>
+          <LanguageSwitcher compact />
+          <!-- compact ProfileMenu keeps Tasks + Logout reachable when sidebar is collapsed -->
+          <ProfileMenu compact @show-profile-details="showProfileDetails = true" @show-tasks="showTasks = true" />
+        </template>
+      </div>
+    </aside>
+    <div class="content">
+      <FilterBar />
+      <main class="main-content">
+        <router-view />
+      </main>
+    </div>
 
     <ProfileDetailsModal
       :is-open="showProfileDetails"
       @close="showProfileDetails = false"
     />
-
     <TasksModal
       :is-open="showTasks"
       :tasks="tasks"
@@ -55,7 +103,7 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { api } from './api'
 import { useAuth } from './composables/useAuth'
 import { useI18n } from './composables/useI18n'
@@ -80,6 +128,28 @@ export default {
     const showProfileDetails = ref(false)
     const showTasks = ref(false)
     const apiTasks = ref([])
+
+    const STORAGE_KEY = 'sidebar-collapsed'
+    // A user's explicit collapse choice should win over the responsive default,
+    // so we only auto-adjust on resize until the user toggles manually.
+    let userToggled = false
+    const stored = localStorage.getItem(STORAGE_KEY)
+    const collapsed = ref(stored !== null ? stored === 'true' : window.innerWidth < 900)
+    if (stored !== null) userToggled = true
+
+    const toggleSidebar = () => {
+      collapsed.value = !collapsed.value
+      userToggled = true
+      localStorage.setItem(STORAGE_KEY, String(collapsed.value))
+    }
+
+    let resizeTimer = null
+    const handleResize = () => {
+      if (resizeTimer) clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(() => {
+        if (!userToggled) collapsed.value = window.innerWidth < 900
+      }, 150)
+    }
 
     // Merge mock tasks from currentUser with API tasks
     const tasks = computed(() => {
@@ -146,7 +216,15 @@ export default {
       }
     }
 
-    onMounted(loadTasks)
+    onMounted(() => {
+      loadTasks()
+      window.addEventListener('resize', handleResize)
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', handleResize)
+      if (resizeTimer) clearTimeout(resizeTimer)
+    })
 
     return {
       t,
@@ -155,7 +233,9 @@ export default {
       tasks,
       addTask,
       deleteTask,
-      toggleTask
+      toggleTask,
+      collapsed,
+      toggleSidebar
     }
   }
 }
@@ -168,110 +248,218 @@ export default {
   box-sizing: border-box;
 }
 
+:root {
+  --sidebar-w: 240px;
+  --sidebar-w-collapsed: 64px;
+  --c-bg: #f8fafc;
+  --c-surface: #ffffff;
+  --c-border: #e2e8f0;
+  --c-text: #0f172a;
+  --c-text-muted: #64748b;
+  --c-accent: #2563eb;
+  --c-accent-soft: #eff6ff;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --radius: 8px;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: #f8fafc;
-  color: #1e293b;
+  font-family: var(--font-sans);
+  background: var(--c-bg);
+  color: var(--c-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .app {
   display: flex;
-  flex-direction: column;
   min-height: 100vh;
 }
 
-.top-nav {
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--c-surface);
+  border-right: 1px solid var(--c-border);
   position: sticky;
   top: 0;
-  z-index: 100;
+  height: 100vh;
+  padding: var(--sp-5) var(--sp-4);
+  gap: var(--sp-5);
+  transition: width 0.2s ease;
 }
 
-.nav-container {
-  max-width: 1600px;
-  margin: 0 auto;
+.sidebar.collapsed {
+  width: var(--sidebar-w-collapsed);
+  padding-left: var(--sp-2);
+  padding-right: var(--sp-2);
+}
+
+.sidebar-toggle {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--c-text-muted);
+  padding: var(--sp-1);
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
-  padding: 0 2rem;
-  height: 70px;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.nav-container > .nav-tabs {
-  margin-left: auto;
-  margin-right: 1rem;
+.sidebar-toggle:hover {
+  background: var(--c-bg);
+  color: var(--c-text);
 }
 
-.nav-container > .language-switcher {
-  margin-right: 1rem;
+.sidebar-toggle svg {
+  transition: transform 0.2s ease;
 }
 
-.logo {
+.sidebar.collapsed .sidebar-toggle {
+  align-self: center;
+}
+
+.sidebar.collapsed .sidebar-toggle svg {
+  transform: rotate(180deg);
+}
+
+.sidebar-logo {
   display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: 0 var(--sp-2);
+  overflow: hidden;
 }
 
-.logo h1 {
-  font-size: 1.375rem;
+.logo-monogram {
+  display: none;
+  font-size: 0.875rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--c-accent);
+  letter-spacing: 0.05em;
+}
+
+.sidebar.collapsed .logo-monogram {
+  display: block;
+  text-align: center;
+}
+
+.sidebar-logo h1 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--c-text);
   letter-spacing: -0.025em;
 }
 
 .subtitle {
-  font-size: 0.813rem;
-  color: #64748b;
+  font-size: 0.75rem;
+  color: var(--c-text-muted);
   font-weight: 400;
-  padding-left: 0.75rem;
-  border-left: 1px solid #e2e8f0;
 }
 
-.nav-tabs {
+.sidebar.collapsed .sidebar-logo h1,
+.sidebar.collapsed .sidebar-logo .subtitle {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-logo {
+  align-items: center;
+}
+
+.sidebar-nav {
   display: flex;
-  gap: 0.25rem;
+  flex-direction: column;
+  gap: var(--sp-1);
+  overflow: hidden;
 }
 
-.nav-tabs a {
-  padding: 0.625rem 1.25rem;
-  color: #64748b;
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius);
+  color: var(--c-text-muted);
   text-decoration: none;
+  font-size: 0.9rem;
   font-weight: 500;
-  font-size: 0.938rem;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  position: relative;
+  border-left: 3px solid transparent;
+  transition: all 0.15s ease;
 }
 
-.nav-tabs a:hover {
-  color: #0f172a;
-  background: #f1f5f9;
+.nav-item svg {
+  flex-shrink: 0;
 }
 
-.nav-tabs a.active {
-  color: #2563eb;
-  background: #eff6ff;
+.nav-label {
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.nav-tabs a.active::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: #2563eb;
+.nav-item:hover {
+  background: var(--c-bg);
+  color: var(--c-text);
+}
+
+/* router-link-exact-active (not router-link-active) so the "/" Overview link
+   isn't highlighted on every route — "/" is a prefix of all flat routes */
+.nav-item.router-link-exact-active {
+  background: var(--c-accent-soft);
+  color: var(--c-accent);
+  border-left-color: var(--c-accent);
+}
+
+.sidebar.collapsed .nav-label {
+  display: none;
+}
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: var(--sp-2);
+  border-left: none;
+}
+
+.sidebar.collapsed .nav-item.router-link-exact-active {
+  border-left: none;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--c-border);
+}
+
+.sidebar.collapsed .sidebar-footer {
+  align-items: center;
+}
+
+
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .main-content {
   flex: 1;
+  padding: var(--sp-6);
   max-width: 1600px;
   width: 100%;
   margin: 0 auto;
-  padding: 1.5rem 2rem;
 }
 
 .page-header {

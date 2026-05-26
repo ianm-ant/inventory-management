@@ -102,15 +102,16 @@ export default {
 
 <style scoped>
 .filters-bar {
-  background: #f8fafc;
+  background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
   padding: 0.75rem 0;
   position: sticky;
-  top: 70px;
+  top: 0;
   z-index: 90;
 }
 
 .filters-container {
+  /* match the 1600px cap on .main-content so filters align above the data on wide screens */
   max-width: 1600px;
   margin: 0 auto;
   padding: 0 2rem;

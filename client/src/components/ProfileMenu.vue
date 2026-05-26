@@ -2,14 +2,17 @@
   <div class="profile-menu">
     <button
       class="profile-button"
+      :class="{ compact: props.compact }"
       @click="toggleDropdown"
       @blur="handleBlur"
     >
       <div class="avatar">
         {{ getInitials(currentUser.name) }}
       </div>
-      <span class="profile-name">{{ currentUser.name }}</span>
+      <!-- hide text and chevron in compact (icon-only) mode so the button fits the collapsed sidebar -->
+      <span v-if="!props.compact" class="profile-name">{{ currentUser.name }}</span>
       <svg
+        v-if="!props.compact"
         class="chevron"
         :class="{ 'chevron-open': isDropdownOpen }"
         width="16"
@@ -78,6 +81,8 @@ import { ref, computed } from 'vue'
 import { useAuth } from '../composables/useAuth'
 import { useI18n } from '../composables/useI18n'
 
+const props = defineProps({ compact: { type: Boolean, default: false } })
+
 const { currentUser, logout, getInitials } = useAuth()
 const { t } = useI18n()
 
@@ -138,6 +143,20 @@ const handleLogout = () => {
   border-color: #cbd5e1;
 }
 
+/* icon-only variant for the collapsed sidebar — matches the look of the
+   sidebar-toggle button so the footer feels visually consistent */
+.profile-button.compact {
+  background: transparent;
+  border: none;
+  padding: var(--sp-2, 8px);
+  justify-content: center;
+}
+
+.profile-button.compact:hover {
+  background: var(--c-bg, #f8fafc);
+  border-color: transparent;
+}
+
 .avatar {
   width: 32px;
   height: 32px;
@@ -169,8 +188,9 @@ const handleLogout = () => {
 
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  right: auto;
   min-width: 280px;
   background: white;
   border: 1px solid #e2e8f0;
