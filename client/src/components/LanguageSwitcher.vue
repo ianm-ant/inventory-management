@@ -2,6 +2,7 @@
   <div class="language-switcher">
     <button
       class="language-button"
+      :class="{ compact: props.compact }"
       @click="toggleDropdown"
       @blur="handleBlur"
     >
@@ -17,8 +18,9 @@
         <path d="M10 3C10 3 7.5 5.5 7.5 10C7.5 14.5 10 17 10 17" stroke="currentColor" stroke-width="1.5"/>
         <path d="M10 3C10 3 12.5 5.5 12.5 10C12.5 14.5 10 17 10 17" stroke="currentColor" stroke-width="1.5"/>
       </svg>
-      <span class="language-label">{{ localeName }}</span>
+      <span v-if="!props.compact" class="language-label">{{ localeName }}</span>
       <svg
+        v-if="!props.compact"
         class="chevron"
         :class="{ 'chevron-open': isDropdownOpen }"
         width="16"
@@ -57,6 +59,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
+
+const props = defineProps({ compact: { type: Boolean, default: false } })
 
 const { currentLocale, setLocale, availableLocales, localeName } = useI18n()
 
@@ -180,5 +184,27 @@ const selectLanguage = (locale) => {
 .check-icon {
   color: #2563eb;
   flex-shrink: 0;
+}
+
+/* Icon-only variant for the 64px collapsed sidebar */
+.language-button.compact {
+  padding: var(--sp-2, 8px);
+  background: none;
+  border-color: transparent;
+  justify-content: center;
+  width: 100%;
+}
+
+.language-button.compact:hover {
+  background: var(--c-bg, #f8fafc);
+  border-color: transparent;
+}
+
+.language-button.compact .globe-icon {
+  color: var(--c-text-muted, #64748b);
+}
+
+.language-button.compact:hover .globe-icon {
+  color: var(--c-text, #0f172a);
 }
 </style>

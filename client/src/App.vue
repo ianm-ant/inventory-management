@@ -73,12 +73,15 @@
             @show-tasks="showTasks = true"
           />
         </template>
-        <button v-else class="footer-avatar" @click="showProfileDetails = true" title="Profile">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="10" cy="7" r="4"/>
-            <path d="M2 18c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
-          </svg>
-        </button>
+        <template v-else>
+          <LanguageSwitcher compact />
+          <button class="footer-avatar" @click="showProfileDetails = true" title="Profile">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="7" r="4"/>
+              <path d="M2 18c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+            </svg>
+          </button>
+        </template>
       </div>
     </aside>
     <div class="content">
@@ -130,15 +133,26 @@ export default {
     const showTasks = ref(false)
     const apiTasks = ref([])
 
-    // Sidebar collapse state
-    const collapsed = ref(false)
+    const STORAGE_KEY = 'sidebar-collapsed'
+    // A user's explicit collapse choice should win over the responsive default,
+    // so we only auto-adjust on resize until the user toggles manually.
+    let userToggled = false
+    const stored = localStorage.getItem(STORAGE_KEY)
+    const collapsed = ref(stored !== null ? stored === 'true' : window.innerWidth < 900)
+    if (stored !== null) userToggled = true
 
     const toggleSidebar = () => {
       collapsed.value = !collapsed.value
+      userToggled = true
+      localStorage.setItem(STORAGE_KEY, String(collapsed.value))
     }
 
+    let resizeTimer = null
     const handleResize = () => {
-      collapsed.value = window.innerWidth < 900
+      if (resizeTimer) clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(() => {
+        if (!userToggled) collapsed.value = window.innerWidth < 900
+      }, 150)
     }
 
     // Merge mock tasks from currentUser with API tasks
@@ -208,13 +222,12 @@ export default {
 
     onMounted(() => {
       loadTasks()
-      // Set initial collapsed state based on window width
-      collapsed.value = window.innerWidth < 900
       window.addEventListener('resize', handleResize)
     })
 
     onUnmounted(() => {
       window.removeEventListener('resize', handleResize)
+      if (resizeTimer) clearTimeout(resizeTimer)
     })
 
     return {
@@ -262,7 +275,7 @@ export default {
 body {
   font-family: var(--font-sans);
   background: var(--c-bg);
-  color: #1e293b;
+  color: var(--c-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -285,7 +298,6 @@ body {
   padding: var(--sp-5) var(--sp-4);
   gap: var(--sp-5);
   transition: width 0.2s ease;
-  overflow: hidden;
 }
 
 .sidebar.collapsed {
@@ -330,6 +342,7 @@ body {
   flex-direction: column;
   gap: var(--sp-1);
   padding: 0 var(--sp-2);
+  overflow: hidden;
 }
 
 .logo-monogram {
@@ -371,6 +384,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--sp-1);
+  overflow: hidden;
 }
 
 .nav-item {
@@ -432,7 +446,6 @@ body {
 
 .sidebar.collapsed .sidebar-footer {
   align-items: center;
-  overflow: hidden;
 }
 
 .footer-avatar {
