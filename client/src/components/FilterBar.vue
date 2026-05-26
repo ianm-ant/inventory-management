@@ -111,6 +111,9 @@ export default {
 }
 
 .filters-container {
+  /* match the 1600px cap on .main-content so filters align above the data on wide screens */
+  max-width: 1600px;
+  margin: 0 auto;
   padding: 0 2rem;
   display: flex;
   align-items: center;

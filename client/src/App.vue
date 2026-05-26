@@ -75,12 +75,8 @@
         </template>
         <template v-else>
           <LanguageSwitcher compact />
-          <button class="footer-avatar" @click="showProfileDetails = true" title="Profile">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="10" cy="7" r="4"/>
-              <path d="M2 18c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
-            </svg>
-          </button>
+          <!-- compact ProfileMenu keeps Tasks + Logout reachable when sidebar is collapsed -->
+          <ProfileMenu compact @show-profile-details="showProfileDetails = true" @show-tasks="showTasks = true" />
         </template>
       </div>
     </aside>
@@ -415,7 +411,9 @@ body {
   color: var(--c-text);
 }
 
-.nav-item.router-link-active {
+/* router-link-exact-active (not router-link-active) so the "/" Overview link
+   isn't highlighted on every route — "/" is a prefix of all flat routes */
+.nav-item.router-link-exact-active {
   background: var(--c-accent-soft);
   color: var(--c-accent);
   border-left-color: var(--c-accent);
@@ -431,7 +429,7 @@ body {
   border-left: none;
 }
 
-.sidebar.collapsed .nav-item.router-link-active {
+.sidebar.collapsed .nav-item.router-link-exact-active {
   border-left: none;
 }
 
@@ -448,22 +446,6 @@ body {
   align-items: center;
 }
 
-.footer-avatar {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--c-text-muted);
-  padding: var(--sp-2);
-  border-radius: var(--radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.footer-avatar:hover {
-  background: var(--c-bg);
-  color: var(--c-text);
-}
 
 .content {
   flex: 1;
