@@ -6,12 +6,17 @@ on:
 
 jobs:
   claude-review:
+    # Only run for same-repo PRs. GitHub already withholds secrets from
+    # fork-triggered pull_request runs, so the action could not authenticate
+    # for forks anyway; this makes the job skip cleanly instead of failing and
+    # keeps the secret-scoped run limited to branches pushed by trusted writers.
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
       issues: read
-      id-token: write
+      id-token: write   # Required: the action exchanges an OIDC token for a GitHub App token
 
     steps:
       - name: Checkout repository
