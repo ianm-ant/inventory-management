@@ -169,7 +169,7 @@ export default {
     } = useFilters();
 
     const loading = ref(true);
-    const error = ref(null);
+    const error = ref(false);
     const quarterlyData = ref([]);
     const monthlyData = ref([]);
 
@@ -246,8 +246,11 @@ export default {
         const changeClass =
           change > 0 ? "positive-change" : change < 0 ? "negative-change" : "";
         const changeFormatted =
-          (change >= 0 ? "+" : "-") +
-          formatCurrency(Math.abs(change), currentCurrency.value);
+          change > 0
+            ? "+" + formatCurrency(change, currentCurrency.value)
+            : change < 0
+              ? "-" + formatCurrency(Math.abs(change), currentCurrency.value)
+              : formatCurrency(0, currentCurrency.value);
         const growthRate =
           prev.revenue === 0
             ? "N/A"
@@ -258,15 +261,15 @@ export default {
       }),
     );
 
+    const LOCALE_TAGS = { en: "en-US", ja: "ja-JP" };
+
     const formatMonth = (monthStr) => {
       const parts = monthStr.split("-");
       if (parts.length !== 2) return monthStr;
       const date = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, 1);
       if (isNaN(date.getTime())) return monthStr;
-      return date.toLocaleDateString(
-        currentLocale.value === "ja" ? "ja-JP" : "en-US",
-        { year: "numeric", month: "short" },
-      );
+      const tag = LOCALE_TAGS[currentLocale.value] || "en-US";
+      return date.toLocaleDateString(tag, { year: "numeric", month: "short" });
     };
 
     const getFulfillmentClass = (rate) => {
