@@ -1,0 +1,8 @@
+# CI workflow files must stay byte-identical to the copy on the default
+# branch — claude-code-action validates its own workflow file against main,
+# so any reformatting here breaks the PR review check.
+.github/
+
+# Generated / vendored files
+**/package-lock.json
+**/dist/
